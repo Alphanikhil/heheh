@@ -5,7 +5,7 @@ const QRCodeDisplay = () => {
     const [qrCode, setQrCode] = useState('');
 
     useEffect(() => {
-        const ws = new WebSocket('https://heheh-pearl.vercel.app'); // Ensure the port matches the backend
+        const ws = new WebSocket('https://heheh-u3h7.vercel.app'); // Ensure the port matches the backend
 
         ws.onmessage = (event) => {
             setQrCode(event.data);
