@@ -45,6 +45,10 @@ app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use('/api/order', orderRouter);
+app.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, 'path/to/your/client/build/index.html'));
+  });
+
 
 connectDB().then(() => {
     const server = app.listen(PORT, () => {
