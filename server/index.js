@@ -5,6 +5,8 @@ dotenv.config();
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/connectDB.js';
 import userRouter from './route/user.route.js';
 import categoryRouter from './route/category.route.js';
@@ -14,7 +16,7 @@ import productRouter from './route/product.route.js';
 import cartRouter from './route/cart.route.js';
 import addressRouter from './route/address.route.js';
 import orderRouter from './route/order.route.js';
-import initializeWebSocket from './utils/sendWhatsApp.js';
+import initializeWebSocket from './utils/websocket.js';
 
 const app = express();
 app.use(cors({
@@ -29,6 +31,11 @@ app.use(helmet({
 }));
 
 const PORT = process.env.PORT || 8050;
+
+// Serve static files from the React app
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get("/", (request, response) => {
     // server to client
@@ -45,10 +52,11 @@ app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use('/api/order', orderRouter);
-app.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, 'path/to/your/client/build/index.html'));
-  });
 
+// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 connectDB().then(() => {
     const server = app.listen(PORT, () => {
