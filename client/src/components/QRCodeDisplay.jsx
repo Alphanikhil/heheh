@@ -5,9 +5,12 @@ const QRCodeDisplay = () => {
     const [qrCode, setQrCode] = useState('');
 
     useEffect(() => {
-        const ws = new WebSocket('https://heheh-v2ev.onrender.com'); // Ensure the port matches the backend
+        const backendUrl = import.meta.env.VITE_API_URL || 'ws://localhost:8050';
+        console.log('Connecting to WebSocket at:', backendUrl);
+        const ws = new WebSocket(backendUrl);
 
         ws.onmessage = (event) => {
+            console.log('Received message:', event.data);
             setQrCode(event.data);
         };
 
